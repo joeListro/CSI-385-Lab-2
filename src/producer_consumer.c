@@ -15,36 +15,39 @@
 
 #include "producer_consumer.h"
 
-pthread_mutex_t = MUTEX;
-pthread_cond_t = pCond, cCond;
+pthread_mutex_t MUTEX;
+pthread_cond_t pCond, cCond;
 
-int *sharedBuffer[];
-int numProducers = 0, numConsumers = 0, bufferSize = 0, count = 0;
+int count = 0;
 
 void waitTime(unsigned int seconds) {
 	unsigned int finishTime = time(0) + seconds;
 	while(time(0) < finishTime);
 }
 
-void *producerMain(unsigned int numExistingProducers){
-	String pID = "p" + numExistingProducers;
+void producerMain(unsigned int numExisting, int bufferSize){
+	char* pID = "p" + getsid();
 	waitTime(1);	
-	srand(time(NULL));
-	int numElements = rand() % bufferSize;
- 	for(int i = 0; i < numElements; i++) {
+	int i, numElements = rand() % bufferSize;
+ 	for(i = 0; i < numElements; i++) {
 		count = count + 1;
 		printf("%i : %i has been added to the thread.", pID, count);
 	}
 }
 
-void &consumerMain(unsigned int numExistingConsumers){
-	String cID = "c" + numExistingConsumers;
+void consumerMain(unsigned int numExisting){
+	char* cID = "c" + getsid();
 	waitTime(1);
 	int removedItem;
 	printf("%i : %i has been removed from the thread.", cID, removedItem);
 }
 
-int main(int argc, char * argv[]){
+int main(int argc, char* argv[]){
+	int *sharedBuffer;
+	int numProducers, numConsumers, bufferSize;
+
+	srand(time(NULL));
+
 	if(argc < 4){
 		printf("Too few arguments.\n");
 		return(1);
@@ -57,8 +60,9 @@ int main(int argc, char * argv[]){
 		numConsumers = atoi(argv[2]);
 		bufferSize = atoi(argv[3]);
 	}
+
 	printf("ARGUMENTS - P:%i C:%i BS:%i\n", numProducers, numConsumers, bufferSize);
 
-	sharedBuffer = new int[bufferSize];
+	sharedBuffer = malloc(sizeof(*sharedBuffer) * bufferSize);
 
 }
