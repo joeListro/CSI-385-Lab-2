@@ -15,35 +15,34 @@
 
 #include "producer_consumer.h"
 
-pthread_mutex_t MUTEX;
+pthread_mutex_t mutex;
 pthread_cond_t pCond, cCond;
 
-int count = 0;
+int count = 0, *sharedBuffer;
 
 void waitTime(unsigned int seconds) {
 	unsigned int finishTime = time(0) + seconds;
 	while(time(0) < finishTime);
 }
 
-void producerMain(unsigned int numExisting, int bufferSize){
-	char* pID = "p" + getsid();
+void producerMain(int *numExisting, int bufferSize){
+	int id = *( int* ) numExisting;
 	waitTime(1);	
 	int i, numElements = rand() % bufferSize;
  	for(i = 0; i < numElements; i++) {
 		count = count + 1;
-		printf("%i : %i has been added to the thread.", pID, count);
+		printf("%i : %i has been added to the thread.", id, count);
 	}
 }
 
-void consumerMain(unsigned int numExisting){
-	char* cID = "c" + getsid();
+void consumerMain(int *numExisting){
+	int id = *( int* ) numExisting;
 	waitTime(1);
 	int removedItem;
-	printf("%i : %i has been removed from the thread.", cID, removedItem);
+	printf("%i : %i has been removed from the thread.", id, removedItem);
 }
 
 int main(int argc, char* argv[]){
-	int *sharedBuffer;
 	int numProducers, numConsumers, bufferSize;
 
 	srand(time(NULL));
@@ -61,8 +60,11 @@ int main(int argc, char* argv[]){
 		bufferSize = atoi(argv[3]);
 	}
 
-	printf("ARGUMENTS - P:%i C:%i BS:%i\n", numProducers, numConsumers, bufferSize);
+	printf("ARGUMENTS - Producers: %i\nConsumers:%i\nBufferSize:%i\n", numProducers, numConsumers, bufferSize);
 
 	sharedBuffer = malloc(sizeof(*sharedBuffer) * bufferSize);
-
+	
+	printf("Press q to kill all threads");
+	
+	free(sharedBuffer);
 }
