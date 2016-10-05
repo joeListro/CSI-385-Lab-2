@@ -1,6 +1,6 @@
 /*
  * Filename: producer_consumer.h
- * Author: Bryan Martin
+ * Author: Bryan Martin & Joe Listro
  * Class: CSI-385-02
  * Assignment: Lab 2
  * 
