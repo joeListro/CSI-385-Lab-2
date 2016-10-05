@@ -15,9 +15,8 @@
 
 #include "producer_consumer.h"
 
-#define MAX_THREADS 1000000000  // Max number of elements allowed on thread.
-pthread_mutex_t PTHREAD_MUTEX_INITALIZER;
-pthread_cond_t cond1, cond2;
+pthread_mutex_t = MUTEX;
+pthread_cond_t = pCond, cCond;
 
 int *sharedBuffer[];
 int numProducers = 0, numConsumers = 0, bufferSize = 0, count = 0;
@@ -60,6 +59,6 @@ int main(int argc, char * argv[]){
 	}
 	printf("ARGUMENTS - P:%i C:%i BS:%i\n", numProducers, numConsumers, bufferSize);
 
-	sharedBuffer = new [bufferSize];
+	sharedBuffer = new int[bufferSize];
 
 }
