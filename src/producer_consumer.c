@@ -22,16 +22,17 @@ void waitTime(unsigned int seconds) {
 
 void *producerMain(void *numExisting){
 	int id = *( int* ) numExisting;
+/*	while(true){ */
 	waitTime(1);
 
 	/* Try to grab the lock */
 	pthread_mutex_lock(&mutex);
 	
 	/* Wait for the lock when the buffer isn't full. */
-	while(sizeof(sharedBuffer) < bufferSize){ pthread_cond_wait(&readyToConsume, &mutex); }
+	while(count < bufferSize){ pthread_cond_wait(&readyToConsume, &mutex); }
 
 	/* Add items to the buffer*/
-	int i, numElements = rand() % bufferSize;
+	int i, numElements = rand() % (bufferSize - count - 1);
  	count = count + numElements;
 	for(i = 0; i < numElements; i++) {
 		sharedBuffer[count + i] = (count + i);
@@ -40,17 +41,18 @@ void *producerMain(void *numExisting){
 
 	pthread_cond_signal(&readyToConsume);
 	pthread_mutex_unlock(&mutex);
+/*	} */
 }
 
 void *consumerMain(void *numExisting){
     int id = *( int* ) numExisting;
     int removedItem;
-    
-    while(true) {
-        waitTime(1);
+/*	while(true){ */
+	waitTime(1);
+	pthread_mutex_lock(&mutex); 
         
         /* Wait for the lock when the buffer isn't empty. */
-        while(sizeof(sharedBuffer) > 0){ pthread_cond_wait(&readyToProduce, &mutex); }
+        while(count > 0){ pthread_cond_wait(&readyToProduce, &mutex); }
             
         sharedBuffer[count] = 0;
         
@@ -60,8 +62,7 @@ void *consumerMain(void *numExisting){
         
         pthread_cond_signal(&readyToProduce);
         pthread_mutex_unlock(&mutex);
-    }
-    return;
+/*	} */
 }
 
 int main(int argc, char* argv[]){
@@ -103,24 +104,21 @@ int main(int argc, char* argv[]){
     /* Create producer threads */
 	int i;
 	for(i=0; i<numProducers; i++){
-		pthread_create(&prod[i],NULL,producerMain,NULL);
+		pthread_create(&prod[i],NULL,producerMain,&i);
 	}
 	
     /* Create consumer threads */
 	for(i=0; i<numConsumers; i++){
-		pthread_create(&con[i],NULL,consumerMain,NULL);
+		pthread_create(&con[i],NULL,consumerMain,&i);
 	}
 
     /* Kill on user input of char q */
 	printf("Press q to kill all threads\n");
-    
+ 
     while(true) {
         /* Wait for the user to press q */
-        if(getchar() != 'q') {
-            break;
-        }
-    }
-	
+	if(getchar() == 'q') { break; }
+  }
     /* Kill all threads */
     for(i=0; i<numProducers; i++){
         pthread_cancel(prod[i]);
@@ -132,15 +130,19 @@ int main(int argc, char* argv[]){
     
     /* Join all thread processes back with main */
     for(i=0; i<numProducers; i++){
-        pthread_join(prod[i],0);
+        pthread_join(prod[i],NULL);
     }
     
     for(i=0; i<numConsumers; i++){
-        pthread_join(con[i],0);
+        pthread_join(con[i],NULL);
     }
-	   
+
+	printf("Reached end.");
+	pthread_cond_destroy(&readyToProduce);
+	pthread_cond_destroy(&readyToConsume);   
  	pthread_mutex_destroy(&mutex);
 	free(sharedBuffer);
 	free(prod);
 	free(con);
+	return 0;
 }
