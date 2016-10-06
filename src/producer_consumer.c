@@ -16,7 +16,7 @@
 #include "producer_consumer.h"
 
 pthread_mutex_t mutex;
-pthread_cond_t pCond, cCond;
+pthread_cond_t readyToProduce, readyToConsume;
 
 int count = 0, *sharedBuffer, bufferSize;
 
@@ -88,9 +88,10 @@ int main(int argc, char* argv[]){
     /* Kill on user input of char q */
 	printf("Press q to kill all threads\n");
     
-    while(getchar()!= 'q') {
+    while(true) {
         /* Wait for the user to press q */
-        
+        if(getchar()!= 'q')
+            break;
     }
 	
     /* Kill all threads */
