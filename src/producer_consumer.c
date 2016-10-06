@@ -15,11 +15,6 @@
 
 #include "producer_consumer.h"
 
-pthread_mutex_t mutex;
-pthread_cond_t readyToProduce, readyToConsume;
-
-int count = 0, *sharedBuffer, bufferSize;
-
 void waitTime(unsigned int seconds) {
 	unsigned int finishTime = time(0) + seconds;
 	while(time(0) < finishTime);

@@ -19,6 +19,11 @@
 #include <time.h>
 #include <stdbool.h>
 
+pthread_mutex_t mutex;
+pthread_cond_t readyToProduce, readyToConsume;
+
+int count = 0, *sharedBuffer, bufferSize;
+
 void waitTime(unsigned int seconds);
 
 
