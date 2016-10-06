@@ -22,7 +22,7 @@ void waitTime(unsigned int seconds) {
 
 void *producerMain(void *numExisting){
 	int id = *( int* ) numExisting;
-/*	while(true){ */
+   while(true){
 	waitTime(1);
 
 	/* Try to grab the lock */
@@ -33,21 +33,21 @@ void *producerMain(void *numExisting){
 
 	/* Add items to the buffer*/
 	int i, numElements = rand() % (bufferSize - count - 1);
- 	count = count + numElements;
 	for(i = 0; i < numElements; i++) {
+		count = count + 1;
 		sharedBuffer[count + i] = (count + i);
 		printf("%i : %i has been added to the thread.", id, (count + i));
 	}
 
 	pthread_cond_signal(&readyToConsume);
 	pthread_mutex_unlock(&mutex);
-/*	} */
+   } 
 }
 
 void *consumerMain(void *numExisting){
     int id = *( int* ) numExisting;
     int removedItem;
-/*	while(true){ */
+    while(true){
 	waitTime(1);
 	pthread_mutex_lock(&mutex); 
         
@@ -62,7 +62,7 @@ void *consumerMain(void *numExisting){
         
         pthread_cond_signal(&readyToProduce);
         pthread_mutex_unlock(&mutex);
-/*	} */
+	}
 }
 
 int main(int argc, char* argv[]){
@@ -97,8 +97,8 @@ int main(int argc, char* argv[]){
 
 	/* Initiate Mutex and Conditions */
 	pthread_mutex_init(&mutex, 0);
-	pthread_cond_init(&readyToConsume, 0);
-	pthread_cond_init(&readyToProduce, 0);
+	pthread_cond_init(&readyToConsume, NULL);
+	pthread_cond_init(&readyToProduce, NULL);
 	
 
     /* Create producer threads */
@@ -130,11 +130,11 @@ int main(int argc, char* argv[]){
     
     /* Join all thread processes back with main */
     for(i=0; i<numProducers; i++){
-        pthread_join(prod[i],NULL);
+//        pthread_join(prod[i],NULL);
     }
     
     for(i=0; i<numConsumers; i++){
-        pthread_join(con[i],NULL);
+//        pthread_join(con[i],NULL);
     }
 
 	printf("Reached end.");
