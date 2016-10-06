@@ -33,6 +33,7 @@ void *producerMain(void *numExisting){
 		count = count + 1;
 		printf("%i : %i has been added to the thread.", id, count);
 	}
+    return;
 }
 
 void *consumerMain(void *numExisting){
@@ -40,15 +41,17 @@ void *consumerMain(void *numExisting){
 	waitTime(1);
 	int removedItem;
 	printf("%i : %i has been removed from the thread.", id, removedItem);
-
+    return;
 }
 
 int main(int argc, char* argv[]){
+    /* Initialize variables */
 	int numProducers, numConsumers;
 	pthread_t *prod, *con;
 
 	srand(time(NULL));
 
+    /* Check number of arguments */
 	if(argc < 4){
 		printf("Too few arguments.\n");
 		return(1);
@@ -57,6 +60,7 @@ int main(int argc, char* argv[]){
 		return(1);
 	}
 	else {
+        /* Read arguments */
 		numProducers = atoi(argv[1]);
 		numConsumers = atoi(argv[2]);
 		bufferSize = atoi(argv[3]);
@@ -64,22 +68,32 @@ int main(int argc, char* argv[]){
 
 	printf("ARGUMENTS - Producers: %i\nConsumers:%i\nBufferSize:%i\n", numProducers, numConsumers, bufferSize);
 
+    /* Allocate memory for buffer and producer/consumer threads */
 	sharedBuffer = malloc(sizeof(*sharedBuffer) * bufferSize);
 
 	prod = (pthread_t *)malloc(numProducers * sizeof(pthread_t));
 	con = (pthread_t *)malloc(numConsumers * sizeof(pthread_t));
 
+    /* Create producer threads */
 	int i;
 	for(i=0; i<numProducers; i++){
 		pthread_create(&prod[i],NULL,producerMain,NULL);
 	}
 	
+    /* Create consumer threads */
 	for(i=0; i<numConsumers; i++){
 		pthread_create(&con[i],NULL,consumerMain,NULL);
 	}
 
+    /* Kill on user input of char q */
 	printf("Press q to kill all threads");
+    
+    while(getchar()!= 'q') {
+        /* Wait for the user to press q */
+    }
 	
+    /* Kill all threads here */
+    
 	free(sharedBuffer);
 	free(prod);
 	free(con);
