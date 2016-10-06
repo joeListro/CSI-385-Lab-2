@@ -27,13 +27,24 @@ void waitTime(unsigned int seconds) {
 
 void *producerMain(void *numExisting){
 	int id = *( int* ) numExisting;
-	waitTime(1);	
+	waitTime(1);
+
+	/* Try to grab the lock */
+	pthread_mutex_lock(&mutex);
+	
+	/* Wait for the lock when the buffer isn't full. */
+	while(sizeof(sharedBuffer) < bufferSize){ pthread__cond_wait(&condp, &mutex); }
+
+	/* Add items to the buffer*/
 	int i, numElements = rand() % bufferSize;
- 	for(i = 0; i < numElements; i++) {
-		count = count + 1;
-		printf("%i : %i has been added to the thread.", id, count);
+ 	count = count + numElements;
+	for(i = 0; i < numElements; i++) {
+		sharedBuffer[count + i] = (count + i)
+		printf("%i : %i has been added to the thread.", id, (count + I));
 	}
-    return;
+
+	pthread_cond_signal(&readyToConsume);
+	pthread_mutex_unlock(&mutex);
 }
 
 void *consumerMain(void *numExisting){
