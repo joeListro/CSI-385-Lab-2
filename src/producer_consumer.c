@@ -28,13 +28,13 @@ void *producerMain(void *numExisting){
 	pthread_mutex_lock(&mutex);
 	
 	/* Wait for the lock when the buffer isn't full. */
-	while(sizeof(sharedBuffer) < bufferSize){ pthread__cond_wait(&readyToConsume, &mutex); }
+	while(sizeof(sharedBuffer) < bufferSize){ pthread_cond_wait(&readyToConsume, &mutex); }
 
 	/* Add items to the buffer*/
 	int i, numElements = rand() % bufferSize;
  	count = count + numElements;
 	for(i = 0; i < numElements; i++) {
-		sharedBuffer[count + i] = (count + i)
+		sharedBuffer[count + i] = (count + i);
 		printf("%i : %i has been added to the thread.", id, (count + I));
 	}
 
