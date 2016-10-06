@@ -88,28 +88,26 @@ int main(int argc, char* argv[]){
     /* Kill on user input of char q */
 	printf("Press q to kill all threads\n");
     
-    while(true) {
+    while(getchar() != 'q') {
         /* Wait for the user to press q */
-        if(getchar()!= 'q')
-            break;
     }
 	
     /* Kill all threads */
     for(i=0; i<numProducers; i++){
-        pthread_cancel(&prod[i]);
+        pthread_cancel(prod[i]);
     }
     
     for(i=0; i<numConsumers; i++){
-        pthread_cancel(&con[i]);
+        pthread_cancel(con[i]);
     }
     
     /* Join all thread processes back with main */
     for(i=0; i<numProducers; i++){
-        pthread_join(&prod[i]);
+        pthread_join(prod[i],0);
     }
     
     for(i=0; i<numConsumers; i++){
-        pthread_join(&con[i]);
+        pthread_join(con[i],0);
     }
     
 	free(sharedBuffer);
