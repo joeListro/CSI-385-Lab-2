@@ -90,6 +90,7 @@ int main(int argc, char* argv[]){
     
     while(getchar()!= 'q') {
         /* Wait for the user to press q */
+        
     }
 	
     /* Kill all threads */
@@ -99,6 +100,15 @@ int main(int argc, char* argv[]){
     
     for(i=0; i<numConsumers; i++){
         pthread_cancel(&con[i]);
+    }
+    
+    /* Join all thread processes back with main */
+    for(i=0; i<numProducers; i++){
+        pthread_join(&prod[i]);
+    }
+    
+    for(i=0; i<numConsumers; i++){
+        pthread_join(&con[i]);
     }
     
 	free(sharedBuffer);
