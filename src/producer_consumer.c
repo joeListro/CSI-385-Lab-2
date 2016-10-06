@@ -108,6 +108,12 @@ int main(int argc, char* argv[]){
 	prod = (pthread_t *)malloc(numProducers * sizeof(pthread_t));
 	con = (pthread_t *)malloc(numConsumers * sizeof(pthread_t));
 
+	/* Initiate Mutex and Conditions */
+	pthread_mutex_init(&mutex, 0);
+	pthread_cond_init(&readyToConsume, 0);
+	pthread_cond_init(&readyToProduce, 0);
+	
+
     /* Create producer threads */
 	int i;
 	for(i=0; i<numProducers; i++){
@@ -146,7 +152,8 @@ int main(int argc, char* argv[]){
     for(i=0; i<numConsumers; i++){
         pthread_join(con[i],0);
     }
-    
+	   
+ 	pthread_mutex_destroy(&mutex);
 	free(sharedBuffer);
 	free(prod);
 	free(con);
