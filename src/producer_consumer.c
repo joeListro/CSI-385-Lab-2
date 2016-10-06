@@ -35,7 +35,7 @@ void *producerMain(void *numExisting){
  	count = count + numElements;
 	for(i = 0; i < numElements; i++) {
 		sharedBuffer[count + i] = (count + i);
-		printf("%i : %i has been added to the thread.", id, (count + I));
+		printf("%i : %i has been added to the thread.", id, (count + i));
 	}
 
 	pthread_cond_signal(&readyToConsume);
