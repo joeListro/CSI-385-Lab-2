@@ -58,8 +58,8 @@ void *consumerMain(void *numExisting){
         
         printf("%i : %i has been removed from the thread.", id, removedItem);
         
-        pthread_mutex_unlock(&mutex);
         pthread_cond_signal(&readyToProduce);
+        pthread_mutex_unlock(&mutex);
     }
     return;
 }
