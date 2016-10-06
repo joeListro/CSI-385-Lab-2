@@ -37,10 +37,33 @@ void *producerMain(void *numExisting){
 }
 
 void *consumerMain(void *numExisting){
-	int id = *( int* ) numExisting;
-	waitTime(1);
-	int removedItem;
-	printf("%i : %i has been removed from the thread.", id, removedItem);
+    int id = *( int* ) numExisting;
+    int removedItem;
+    
+    while(true) {
+        waitTime(1);
+        
+        while(pthread_mutex_lock(&mutex) != 0) {
+            // do nothing
+        };
+        
+        if(count == 0) {
+            
+            printf("%i : Buffer is already empty.", id, removedItem);
+            
+        } else {
+            
+            sharedBuffer[count] = 0;
+            
+            count = count - 1;
+            
+            printf("%i : %i has been removed from the thread.", id, removedItem);
+            
+        }
+        
+        pthread_mutex_unlock(&mutex);
+    }
+	
     return;
 }
 
