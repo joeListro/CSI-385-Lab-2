@@ -54,27 +54,18 @@ void *consumerMain(void *numExisting){
     while(true) {
         waitTime(1);
         
-        while(pthread_mutex_lock(&mutex) != 0) {
-            // do nothing
-        };
+        /* Wait for the lock when the buffer isn't empty. */
+        while(sizeof(sharedBuffer) > 0){ pthread_cond_wait(&readyToProduce, &mutex); }
+            
+        sharedBuffer[count] = 0;
         
-        if(count == 0) {
-            
-            printf("%i : Buffer is already empty.", id, removedItem);
-            
-        } else {
-            
-            sharedBuffer[count] = 0;
-            
-            count = count - 1;
-            
-            printf("%i : %i has been removed from the thread.", id, removedItem);
-            
-        }
+        count = count - 1;
+        
+        printf("%i : %i has been removed from the thread.", id, removedItem);
         
         pthread_mutex_unlock(&mutex);
+        pthread_cond_signal(&readyToProduce);
     }
-	
     return;
 }
 
