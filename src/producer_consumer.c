@@ -86,13 +86,20 @@ int main(int argc, char* argv[]){
 	}
 
     /* Kill on user input of char q */
-	printf("Press q to kill all threads");
+	printf("Press q to kill all threads\n");
     
     while(getchar()!= 'q') {
         /* Wait for the user to press q */
     }
 	
-    /* Kill all threads here */
+    /* Kill all threads */
+    for(i=0; i<numProducers; i++){
+        pthread_cancel(&prod[i]);
+    }
+    
+    for(i=0; i<numConsumers; i++){
+        pthread_cancel(&con[i]);
+    }
     
 	free(sharedBuffer);
 	free(prod);
